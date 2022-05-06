@@ -196,15 +196,6 @@ void AMenuSystemCharacter::OnCreateSessionComplete(FName SessionName, bool bWasS
 
 void AMenuSystemCharacter::OnFindSessionsComplete(bool bWasSuccessful)
 {
-	//if (GEngine)
-	//{
-	//	GEngine->AddOnScreenDebugMessage(
-	//		-1,
-	//		15.f,
-	//		FColor::Cyan,
-	//		FString::Printf(TEXT("Find Session Complete? %s, Results Count: %d"), bWasSuccessful ? TEXT("TRUE") : TEXT("FALSE"), SessionSearch->SearchResults.Num())
-	//	);
-	//}
 	
 	if (!OnlineSessionInterface.IsValid()) return;
 
@@ -243,7 +234,20 @@ void AMenuSystemCharacter::OnFindSessionsComplete(bool bWasSuccessful)
 
 			ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 
-			OnlineSessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, Result);
+			bool bSuccess = OnlineSessionInterface->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, Result);
+
+			if (bSuccess)
+			{
+				if (GEngine)
+				{
+					GEngine->AddOnScreenDebugMessage(
+						-1,
+						15.f,
+						FColor::Green,
+						FString::Printf(TEXT("Successfully Joined The Match Type: %s"), *MatchType)
+					);
+				}
+			}
 		}
 	}
 }
